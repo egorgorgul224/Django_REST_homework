@@ -4,7 +4,7 @@ from materials.models import Course, Lesson
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    """Сериализация модели Course."""
+    """Сериализация модели Course. Используются все поля."""
 
     class Meta:
         model = Course
@@ -12,7 +12,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 class LessonSerializer(serializers.ModelSerializer):
-    """Сериализация модели Lesson."""
+    """Сериализация модели Lesson. Используются все поля."""
 
     class Meta:
         model = Lesson
