@@ -49,12 +49,6 @@ cd ваш_проект
 poetry install
 ```
 
-или
-
-```
-pip install -r requirements.txt
-```
-
 4. Зайдите в файл .env.example и следуйте инструкциям из него.
 
 ---
@@ -157,16 +151,17 @@ pip install -r requirements.txt
 
 ### Контроллеры и ссылки<a id="user_controllers"></a>
 
-1. Контроллер **UserViewSet** для создания и удаления пользователя, вывода списка пользователей и информации о каждом
-пользователи.
+1. Контроллер **UserUpdateAPIView для обновления информации о пользователе. Поля для редактирования: first_name,
+last_name, city, phone, avatar.
 
 ```
-Ссылка для контроллера: адрес/users/
+Ссылка для контроллера: адрес/user/id_пользователя/update/
 ```
 
 ### Сериализация<a id="user_serialize"></a>
 
-Реализована сериализация UserSerializer для модели User.
+Реализована сериализация UserSerializer для модели User. Предоставлен доступ к редактированию полей: first_name,
+last_name, city, phone, avatar.
 
 ---
 

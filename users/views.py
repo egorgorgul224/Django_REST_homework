@@ -1,12 +1,11 @@
-from rest_framework import viewsets
+from rest_framework import generics
 
 from users.models import User
 from users.serializers import UserSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    """Класс ViewSet модели User для создания и удаления пользователя, вывода списка пользователей и информации о
-    каждом пользователи."""
+class UserUpdateAPIView(generics.UpdateAPIView):
+    """Класс generics модели User для обновления информации о пользователе."""
 
     serializer_class = UserSerializer
     queryset = User.objects.all()

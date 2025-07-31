@@ -1,11 +1,11 @@
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 
 from users.apps import UsersConfig
-from users.views import UserViewSet
+from users.views import UserUpdateAPIView
 
 app_name = UsersConfig.name
 
-router = DefaultRouter()
-router.register(r"users", UserViewSet, basename="users")
 
-urlpatterns = [] + router.urls
+urlpatterns = [
+    path("user/<int:pk>/update/", UserUpdateAPIView.as_view(), name="user_update"),
+]
