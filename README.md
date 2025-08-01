@@ -139,16 +139,18 @@ poetry install
 ### Сериализация<a id="materials_serialize"></a>
 
 Реализована 2 сериализации:
-1. CourseSerializer - сериализатор для модели Course. Meta класс передает все поля. Для сериализатора добавлено новое
-поле: lesson_count - для отображения количества уроков в курсе. Для поля реализован метод get_lesson_count для
-подсчета количества уроков в курсе.
+1. CourseSerializer - сериализатор для модели Course. Meta класс передает все поля. Для сериализатора добавлены новые
+поля:
+   - lessons - для вывода информации по урокам в курсе. 
+   - lesson_count - для отображения количества уроков в курсе. Для поля реализован метод get_lesson_count для
+   подсчета количества уроков в курсе.
 
-```
-def get_lesson_count(self, obj):
-    return obj.lessons.count()
-
-'lessons' - related_name поля 'course' модели Lesson.
-```
+    ```
+    def get_lesson_count(self, obj):
+        return obj.lessons.count()
+    
+    'lessons' - related_name поля 'course' модели Lesson.
+    ```
 
 2. LessonSerializer - сериализатор для модели Lesson. Meta класс передает все поля.
 
@@ -177,10 +179,19 @@ last_name, city, phone, avatar.
 Ссылка для контроллера: адрес/user/id_пользователя/update/
 ```
 
+2. Контроллер **PaymentListAPIView** для вывода списка всех платежей по курсам и/или урокам.
+
+```
+Ссылка для контроллера: адрес/payments/
+```
+
 ### Сериализация<a id="users_serialize"></a>
 
-Реализована сериализация UserSerializer для модели User. Предоставлен доступ к редактированию полей: first_name,
+Реализована 2 сериализации:
+1. UserSerializer - сериализатор для модели User. В Meta класс предоставлен доступ к редактированию полей: first_name,
 last_name, city, phone, avatar.
+
+2. PaymentSerializer - сериализатор для модели Payment. В Meta класс предоставлен доступ ко всем полям.
 
 ### Кастомные команды<a id="users_commands"></a>
 
