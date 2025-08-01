@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from materials.models import Course, Lesson
+
 
 # Create your models here.
 class User(AbstractUser):
@@ -23,3 +25,31 @@ class User(AbstractUser):
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
         ordering = ["id"]
+
+
+class Payment(models.Model):
+    """Модель платеж(оплата). Содержит поля user(модель User), created_at(автозаполнение), course(модель Course),
+    lesson(модель Lesson), amount, method(способ оплаты: наличные или перевод на счет)."""
+
+    Cash = "cash"
+    Transfer = "transfer"
+
+    STATUS_CHOICES = [
+        (Cash, "Наличные"),
+        (Transfer, "Перевод на счет"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="payments", verbose_name="Платеж")
+    created_at = models.DateTimeField(auto_now_add=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True, related_name="payments")
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, null=True, blank=True, related_name="payments")
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    method = models.CharField(choices=STATUS_CHOICES, default=Cash, verbose_name="Способ оплаты")
+
+    def __str__(self):
+        return f"{self.created_at}, {self.course if self.course else self.lesson}, {self.user}, {self.amount}"
+
+    class Meta:
+        verbose_name = "Платеж"
+        verbose_name_plural = "Платежи"
+        ordering = ["-created_at"]

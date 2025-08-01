@@ -18,6 +18,7 @@
      - [Модели](#users_models) 
      - [Контроллеры и ссылки](#users_controllers)
      - [Сериализация](#users_serialize)
+     - [Кастомные команды](#users_commands)
 6. [Запуск и тестирование проекта](#launch)
 7. [Лицензия](#license)
 
@@ -73,6 +74,9 @@ poetry install
 │ ├── js
 │     ├── bootstrap.bundle.min.js
 ├── users - приложение на django
+│ ├── management
+│     ├── commands - папка с командами
+│         ├── add_payments - команда для загрузки платежей в базу данных
 │ ├── migrations - папка с миграциями
 │ ├── templates - папка с шаблонами страниц
 │ ├── admin.py, apps.py, models.py, serializers.py, tests.py, urls.py, views.py - модули для работы приложения
@@ -150,18 +154,18 @@ def get_lesson_count(self, obj):
 
 ---
 
-## Приложение User <a id="user_app"></a>
+## Приложение User <a id="users_app"></a>
 
 Приложение user создано для создания/редактирования/просмотра и удаления пользователя.
 
 Ниже будут описаны модели, контроллеры + ссылки, сериализации.
 
-### Модели<a id="user_models"></a>
+### Модели<a id="users_models"></a>
 
 В приложении создана модель:
 - User - приложение для ведения пользователей. Содержит поля email, city, phone, avatar.
 
-### Контроллеры и ссылки<a id="user_controllers"></a>
+### Контроллеры и ссылки<a id="users_controllers"></a>
 
 1. Контроллер **UserUpdateAPIView для обновления информации о пользователе. Поля для редактирования: first_name,
 last_name, city, phone, avatar.
@@ -170,10 +174,22 @@ last_name, city, phone, avatar.
 Ссылка для контроллера: адрес/user/id_пользователя/update/
 ```
 
-### Сериализация<a id="user_serialize"></a>
+### Сериализация<a id="users_serialize"></a>
 
 Реализована сериализация UserSerializer для модели User. Предоставлен доступ к редактированию полей: first_name,
 last_name, city, phone, avatar.
+
+### Кастомные команды<a id="users_commands"></a>
+
+В приложении реализованы следующие команды:
+
+1. add_payments - - команда для добавления платежей в базу данных. При вызове команды происходит удаление текущих
+платежей и загрузка платежей из файла payments_fixture.json.
+
+Команда в консоль: 
+```
+python manage.py add_payments
+```
 
 ---
 
