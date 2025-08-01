@@ -134,7 +134,19 @@ poetry install
 
 ### Сериализация<a id="materials_serialize"></a>
 
-Реализована сериализация CourseSerializer для модели Course и LessonSerializer для Lesson.
+Реализована 2 сериализации:
+1. CourseSerializer - сериализатор для модели Course. Meta класс передает все поля. Для сериализатора добавлено новое
+поле: lesson_count - для отображения количества уроков в курсе. Для поля реализован метод get_lesson_count для
+подсчета количества уроков в курсе.
+
+```
+def get_lesson_count(self, obj):
+    return obj.lessons.count()
+
+'lessons' - related_name поля 'course' модели Lesson.
+```
+
+2. LessonSerializer - сериализатор для модели Lesson. Meta класс передает все поля.
 
 ---
 
