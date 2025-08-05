@@ -14,11 +14,13 @@
      - [Модели](#materials_models) 
      - [Контроллеры и ссылки](#materials_controllers)
      - [Сериализация](#materials_serialize)
+     - [Кастомные команды](#materials_commands)
    - [Приложение Users](#users_app)
      - [Модели](#users_models) 
      - [Контроллеры и ссылки](#users_controllers)
      - [Сериализация](#users_serialize)
      - [Кастомные команды](#users_commands)
+5. [Группы прав](#groups_rights)
 6. [Запуск и тестирование проекта](#launch)
 7. [Лицензия](#license)
 
@@ -61,6 +63,9 @@ poetry install
 ├── config
 │     ├── asgi.py, settings.py, urls.py, wsgi.py необходимые модули для работы приложения
 ├── materials - приложение на django
+│ ├── management
+│     ├── commands - папка с командами
+│         ├── add_groups - команда для загрузки групп доступа в базу данных
 │ ├── migrations - папка с миграциями
 │ ├── admin.py, apps.py, models.py, serializers.py, tests.py, urls.py, views.py - модули для работы приложения
 ├── media
@@ -140,8 +145,8 @@ poetry install
 ### Сериализация<a id="materials_serialize"></a>
 
 Реализована 2 сериализации:
-1. CourseSerializer - сериализатор для модели Course. Meta класс передает все поля. Для сериализатора добавлены новые
-поля:
+1. CourseSerializer - сериализатор для модели Course. Meta класс передает все поля, кроме 'owner'. Для сериализатора
+добавлены новые поля:
    - lessons - для вывода информации по урокам в курсе. 
    - lesson_count - для отображения количества уроков в курсе. Для поля реализован метод get_lesson_count для
    подсчета количества уроков в курсе.
@@ -153,7 +158,20 @@ poetry install
     'lessons' - related_name поля 'course' модели Lesson.
     ```
 
-2. LessonSerializer - сериализатор для модели Lesson. Meta класс передает все поля.
+2. LessonSerializer - сериализатор для модели Lesson. Meta класс передает все поля, кроме 'owner'.
+
+---
+
+### Кастомные команды<a id="materials_commands"></a>
+
+В приложении реализованы следующие команды:
+
+1. add_groups - команда для добавления групп в базу данных.
+
+Команда в консоль: 
+```
+python manage.py add_groups
+```
 
 ---
 
@@ -235,13 +253,20 @@ last_name, city, phone, avatar.
 
 В приложении реализованы следующие команды:
 
-1. add_payments - - команда для добавления платежей в базу данных. При вызове команды происходит удаление текущих
+1. add_payments - команда для добавления платежей в базу данных. При вызове команды происходит удаление текущих
 платежей и загрузка платежей из файла payments_fixture.json.
 
 Команда в консоль: 
 ```
 python manage.py add_payments
 ```
+
+---
+
+## Группы прав<a id="groups_rights"></a>
+
+В приложении используются группы прав:
+1. Группа прав Moderator(Модератор). Модератор может просматривать/обновлять все курсы, рассылки и пользователей.
 
 ---
 

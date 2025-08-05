@@ -7,7 +7,7 @@
         "amount": "20000",
         "method": "transfer",
         "lesson_id": 1,
-        "user_id": 1
+        "user_id": 5
     }
 },
   {
@@ -18,7 +18,7 @@
         "amount": "20000",
         "method": "transfer",
         "lesson_id": 3,
-        "user_id": 1
+        "user_id": 5
     }
 },
   {
@@ -29,7 +29,7 @@
         "amount": "50000",
         "method": "cash",
         "course_id": 3,
-        "user_id": 1
+        "user_id": 5
     }
 }
 ]

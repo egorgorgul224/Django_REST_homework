@@ -8,7 +8,7 @@ class LessonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lesson
-        fields = "__all__"
+        exclude = ["owner"]
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -24,4 +24,4 @@ class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = "__all__"
+        exclude = ["owner"]
