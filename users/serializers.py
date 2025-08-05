@@ -19,4 +19,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "phone", "payments", "city", "avatar"]
+        fields = ["email", "first_name", "last_name", "phone", "city", "payments"]
+
+
+class RegisterUserSerializer(serializers.ModelSerializer):
+    """Сериализация модели User для регистрации/создания пользователя. Предоставлен доступ к полям: email, password,
+    payments."""
+
+    class Meta:
+        model = User
+        fields = ["email", "password", "payments"]
