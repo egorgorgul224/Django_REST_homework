@@ -12,9 +12,12 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
 
     def get_queryset(self):
-        """Функция для получения списка курсов по id_пользователя."""
+        """Функция для получения списка курсов по id_пользователя. Если пользователь имеет статус 'moderator' или
+        'superuser', то отображается весь список курсов."""
 
         user = self.request.user
+        if user.groups.filter(name="moderator").exists() or user.is_superuser:
+            return Course.objects.all()
         return Course.objects.filter(owner=user)
 
     def perform_create(self, serializer):
@@ -60,9 +63,12 @@ class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
 
     def get_queryset(self):
-        """Функция для получения списка уроков по id_пользователя."""
+        """Функция для получения списка уроков по id_пользователя. Если пользователь имеет статус 'moderator' или
+        'superuser', то отображается весь список уроков."""
 
         user = self.request.user
+        if user.groups.filter(name="moderator").exists() or user.is_superuser:
+            return Lesson.objects.all()
         return Lesson.objects.filter(owner=user)
 
 
