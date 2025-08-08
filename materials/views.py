@@ -1,27 +1,75 @@
 from rest_framework import generics, viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from materials.models import Course, Lesson
 from materials.serializers import CourseSerializer, LessonSerializer
+from users.permissions import IsModerator, IsOwner
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     """Класс ViewSet модели Course для создания и удаления курса, вывода списка курсов и информации о каждом курсе."""
 
     serializer_class = CourseSerializer
-    queryset = Course.objects.all()
+
+    def get_queryset(self):
+        """Функция для получения списка курсов по id_пользователя. Если пользователь имеет статус 'moderator' или
+        'staff', то отображается весь список курсов."""
+
+        user = self.request.user
+        if user.groups.filter(name="moderator").exists() or user.is_staff:
+            return Course.objects.all()
+        return Course.objects.filter(owner=user)
+
+    def perform_create(self, serializer):
+        """Функция добавляет в поле owner пользователя, который создает курс."""
+
+        course = serializer.save()
+        course.owner = self.request.user
+        course.save()
+
+    def get_permissions(self):
+        """Функция для проверки прав у пользователя. Если у пользователя есть группа прав 'Модератор', то пользователь
+        может обновлять и просматривать курсы, но не может создавать или удалить их."""
+
+        if self.action == "create":
+            self.permission_classes = (
+                IsAuthenticated,
+                ~IsModerator,
+            )
+        elif self.action in ["update", "partial_update", "retrieve"]:
+            self.permission_classes = (IsAuthenticated, IsModerator | IsOwner)
+        elif self.action == "destroy":
+            self.permission_classes = (IsAuthenticated, ~IsModerator | IsOwner)
+        return super().get_permissions()
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
     """Класс generics модели Lesson для создания урока."""
 
     serializer_class = LessonSerializer
+    permission_classes = [IsAuthenticated, ~IsModerator]
+
+    def perform_create(self, serializer):
+        """Функция добавляет в поле owner пользователя, который создает урок."""
+
+        lesson = serializer.save()
+        lesson.owner = self.request.user
+        lesson.save()
 
 
 class LessonListAPIView(generics.ListAPIView):
     """Класс generics модели Lesson для вывода списка уроков."""
 
     serializer_class = LessonSerializer
-    queryset = Lesson.objects.all()
+
+    def get_queryset(self):
+        """Функция для получения списка уроков по id_пользователя. Если пользователь имеет статус 'moderator' или
+        'staff', то отображается весь список уроков."""
+
+        user = self.request.user
+        if user.groups.filter(name="moderator").exists() or user.is_staff:
+            return Lesson.objects.all()
+        return Lesson.objects.filter(owner=user)
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
@@ -29,6 +77,7 @@ class LessonRetrieveAPIView(generics.RetrieveAPIView):
 
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = [IsAuthenticated, IsModerator | IsOwner]
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
@@ -36,9 +85,11 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
 
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = [IsAuthenticated, IsModerator | IsOwner]
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
     """Класс generics модели Lesson для удаления урока."""
 
     queryset = Lesson.objects.all()
+    permission_classes = [IsAuthenticated, ~IsModerator | IsOwner]
