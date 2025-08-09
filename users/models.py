@@ -53,3 +53,19 @@ class Payment(models.Model):
         verbose_name = "Платеж"
         verbose_name_plural = "Платежи"
         ordering = ["-created_at"]
+
+
+class Subscription(models.Model):
+    """Модель подписка. Содержит поля created_at, user, course."""
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="subscriptions")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="subscriptions")
+
+    def __str__(self):
+        return f"{self.user} - {self.course}"
+
+    class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+        ordering = ["id"]
