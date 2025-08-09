@@ -1,10 +1,14 @@
 from rest_framework import serializers
 
 from materials.models import Course, Lesson
+from materials.validators import DescriptionValidator, VideoValidator
 
 
 class LessonSerializer(serializers.ModelSerializer):
     """Сериализация модели Lesson. Используются все поля."""
+
+    description = serializers.CharField(validators=[DescriptionValidator()], required=False)
+    video_url = serializers.CharField(validators=[VideoValidator()], required=False)
 
     class Meta:
         model = Lesson
@@ -14,6 +18,7 @@ class LessonSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     """Сериализация модели Course. Используются все поля."""
 
+    description = serializers.CharField(validators=[DescriptionValidator()], required=False)
     lesson_count = serializers.SerializerMethodField()
     lessons = LessonSerializer(many=True, read_only=True)
 
