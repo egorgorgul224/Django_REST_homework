@@ -2,6 +2,7 @@ from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from materials.models import Course, Lesson
+from materials.paginators import CourseLessonListPaginator
 from materials.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModerator, IsOwner
 
@@ -10,6 +11,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     """Класс ViewSet модели Course для создания и удаления курса, вывода списка курсов и информации о каждом курсе."""
 
     serializer_class = CourseSerializer
+    pagination_class = CourseLessonListPaginator
 
     def get_queryset(self):
         """Функция для получения списка курсов по id_пользователя. Если пользователь имеет статус 'moderator' или
@@ -61,6 +63,7 @@ class LessonListAPIView(generics.ListAPIView):
     """Класс generics модели Lesson для вывода списка уроков."""
 
     serializer_class = LessonSerializer
+    pagination_class = CourseLessonListPaginator
 
     def get_queryset(self):
         """Функция для получения списка уроков по id_пользователя. Если пользователь имеет статус 'moderator' или
