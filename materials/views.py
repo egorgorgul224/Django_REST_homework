@@ -11,16 +11,8 @@ class CourseViewSet(viewsets.ModelViewSet):
     """Класс ViewSet модели Course для создания и удаления курса, вывода списка курсов и информации о каждом курсе."""
 
     serializer_class = CourseSerializer
+    queryset = Course.objects.all()
     pagination_class = CourseLessonListPaginator
-
-    def get_queryset(self):
-        """Функция для получения списка курсов по id_пользователя. Если пользователь имеет статус 'moderator' или
-        'staff', то отображается весь список курсов."""
-
-        user = self.request.user
-        if user.groups.filter(name="moderator").exists() or user.is_staff:
-            return Course.objects.all()
-        return Course.objects.filter(owner=user)
 
     def perform_create(self, serializer):
         """Функция добавляет в поле owner пользователя, который создает курс."""
@@ -63,16 +55,8 @@ class LessonListAPIView(generics.ListAPIView):
     """Класс generics модели Lesson для вывода списка уроков."""
 
     serializer_class = LessonSerializer
+    queryset = Lesson.objects.all()
     pagination_class = CourseLessonListPaginator
-
-    def get_queryset(self):
-        """Функция для получения списка уроков по id_пользователя. Если пользователь имеет статус 'moderator' или
-        'staff', то отображается весь список уроков."""
-
-        user = self.request.user
-        if user.groups.filter(name="moderator").exists() or user.is_staff:
-            return Lesson.objects.all()
-        return Lesson.objects.filter(owner=user)
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
