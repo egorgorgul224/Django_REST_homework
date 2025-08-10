@@ -107,8 +107,6 @@ class SubscriptionAPIView(APIView):
 
         subs_item = Subscription.objects.all().filter(user=user).filter(course=course_item)
 
-        print(user, course_id, course_item, subs_item)
-
         if subs_item.exists():
             subs_item.delete()
             message = "Подписка отменена"
