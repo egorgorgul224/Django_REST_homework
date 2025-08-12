@@ -8,8 +8,7 @@ from users.models import Subscription
 class LessonSerializer(serializers.ModelSerializer):
     """Сериализация модели Lesson. Используются все поля."""
 
-    description = serializers.CharField(validators=[DescriptionValidator()], required=False)
-    video_url = serializers.CharField(validators=[VideoValidator()], required=False)
+    validators = [VideoValidator(field="video_url"), DescriptionValidator(field="description")]
 
     class Meta:
         model = Lesson
@@ -19,10 +18,10 @@ class LessonSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     """Сериализация модели Course. Используются все поля."""
 
-    description = serializers.CharField(validators=[DescriptionValidator()], required=False)
     lesson_count = serializers.SerializerMethodField()
     subscription = serializers.SerializerMethodField()
     lessons = LessonSerializer(many=True, read_only=True)
+    validators = [DescriptionValidator(field="description")]
 
     def get_lesson_count(self, obj):
         """Метод для подсчета количества уроков в курсе. 'lessons' - related_name поля 'course' модели Lesson."""

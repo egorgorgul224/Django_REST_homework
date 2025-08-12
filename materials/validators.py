@@ -7,9 +7,12 @@ class VideoValidator:
     """Класс-валидатор для проверки ссылки на видео урока. Если ссылка ведет на любой ресурс, кроме youtube.com, то
     возбуждается ошибка: 'Некорректная ссылка на ресурс. Необходимо указать ссылку на youtube.com.'"""
 
-    def __call__(self, field):
+    def __init__(self, field):
+        self.field = field
+
+    def __call__(self, value):
         pattern_url = re.compile(r"https?://(www\.)?youtube\.com/watch\?v=([0-9A-Za-z_-]{11})$")
-        video_url = field.lower()
+        video_url = dict(value).get(self.field)
         if not video_url:
             return
         if not bool(re.match(pattern_url, video_url)):
@@ -20,10 +23,13 @@ class DescriptionValidator:
     """Класс-валидатор для проверки ссылок в описании курса и урока. Если ссылка ведет на любой ресурс, кроме
     youtube.com, то возбуждается ошибка: 'Некорректная ссылка на ресурс. Необходимо указать ссылку на youtube.com.'"""
 
-    def __call__(self, field):
+    def __init__(self, field):
+        self.field = field
+
+    def __call__(self, value):
         pattern_url = re.compile(r"https?://[^\s]+")
         pattern_youtube_url = re.compile(r"https?://(www\.)?youtube\.com/.*")
-        description = field.lower()
+        description = dict(value).get(self.field)
         if not description:
             return
         urls_in_des = pattern_url.findall(description)
