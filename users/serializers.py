@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from users.models import Payment, User
+from users.models import Payment, Subscription, User
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -37,3 +37,11 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["email", "password", "payments"]
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    """Сериализация модели Subscription. Предоставлен доступ ко всем полям, кроме 'created_at'."""
+
+    class Meta:
+        model = Subscription
+        exclude = ["created_at"]

@@ -8,7 +8,7 @@ from materials.views import (CourseViewSet, LessonCreateAPIView, LessonDestroyAP
 app_name = MaterialsConfig.name
 
 router = DefaultRouter()
-router.register(r"courses", CourseViewSet, basename="courses")
+router.register(r"courses", CourseViewSet)
 
 urlpatterns = [
     # ссылки для модели Lesson

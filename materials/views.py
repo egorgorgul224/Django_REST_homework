@@ -2,6 +2,7 @@ from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from materials.models import Course, Lesson
+from materials.paginators import CourseLessonListPaginator
 from materials.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModerator, IsOwner
 
@@ -10,15 +11,8 @@ class CourseViewSet(viewsets.ModelViewSet):
     """Класс ViewSet модели Course для создания и удаления курса, вывода списка курсов и информации о каждом курсе."""
 
     serializer_class = CourseSerializer
-
-    def get_queryset(self):
-        """Функция для получения списка курсов по id_пользователя. Если пользователь имеет статус 'moderator' или
-        'staff', то отображается весь список курсов."""
-
-        user = self.request.user
-        if user.groups.filter(name="moderator").exists() or user.is_staff:
-            return Course.objects.all()
-        return Course.objects.filter(owner=user)
+    queryset = Course.objects.all()
+    pagination_class = CourseLessonListPaginator
 
     def perform_create(self, serializer):
         """Функция добавляет в поле owner пользователя, который создает курс."""
@@ -61,15 +55,8 @@ class LessonListAPIView(generics.ListAPIView):
     """Класс generics модели Lesson для вывода списка уроков."""
 
     serializer_class = LessonSerializer
-
-    def get_queryset(self):
-        """Функция для получения списка уроков по id_пользователя. Если пользователь имеет статус 'moderator' или
-        'staff', то отображается весь список уроков."""
-
-        user = self.request.user
-        if user.groups.filter(name="moderator").exists() or user.is_staff:
-            return Lesson.objects.all()
-        return Lesson.objects.filter(owner=user)
+    queryset = Lesson.objects.all()
+    pagination_class = CourseLessonListPaginator
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
