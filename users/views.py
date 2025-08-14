@@ -9,8 +9,13 @@ from rest_framework.views import APIView
 from materials.models import Course
 from users.models import Payment, Subscription, User
 from users.permissions import IsModerator, IsOwnerAccount
-from users.serializers import (PaymentSerializer, RegisterUserSerializer, SubscriptionSerializer,
-                               UserMinInfoSerializer, UserSerializer)
+from users.serializers import (
+    PaymentSerializer,
+    RegisterUserSerializer,
+    SubscriptionSerializer,
+    UserMinInfoSerializer,
+    UserSerializer,
+)
 
 
 class UserCreateAPIView(generics.CreateAPIView):

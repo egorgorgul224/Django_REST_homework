@@ -1,3 +1,5 @@
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated
 
@@ -7,6 +9,36 @@ from materials.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModerator, IsOwner
 
 
+@method_decorator(
+    name="list",
+    decorator=swagger_auto_schema(operation_description="Класс ViewSet модели Course для отображения списка курсов."),
+)
+@method_decorator(
+    name="create",
+    decorator=swagger_auto_schema(operation_description="Класс ViewSet модели Course для создания курса."),
+)
+@method_decorator(
+    name="retrieve",
+    decorator=swagger_auto_schema(
+        operation_description="Класс ViewSet модели Course для отображения информации о курсе."
+    ),
+)
+@method_decorator(
+    name="update",
+    decorator=swagger_auto_schema(
+        operation_description="Класс ViewSet модели Course для обновления информации о курсе."
+    ),
+)
+@method_decorator(
+    name="partial_update",
+    decorator=swagger_auto_schema(
+        operation_description="Класс ViewSet модели Course для обновления информации о курсе."
+    ),
+)
+@method_decorator(
+    name="destroy",
+    decorator=swagger_auto_schema(operation_description="Класс ViewSet модели Course для удаления курса."),
+)
 class CourseViewSet(viewsets.ModelViewSet):
     """Класс ViewSet модели Course для создания и удаления курса, вывода списка курсов и информации о каждом курсе."""
 
