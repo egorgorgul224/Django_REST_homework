@@ -69,3 +69,34 @@ class Subscription(models.Model):
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
         ordering = ["id"]
+
+
+class Donation(models.Model):
+    """Модель оплата курса. Содержит поля course(id курса), amount(сумма оплаты), session_id(id сессии),
+    link(ссылка на оплату), user(id_пользователя)."""
+
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="donations")
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    session_id = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="ID сессии", help_text="Укажите ID сессии"
+    )
+    link = models.URLField(
+        max_length=400, blank=True, null=True, verbose_name="Ссылка на оплату", help_text="Укажите ссылку на оплату"
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="donations",
+        blank=True,
+        null=True,
+        verbose_name="Пользователь",
+        help_text="Укажиет пользователя",
+    )
+
+    def __str__(self):
+        return f"{self.user}: {self.course} - {self.amount}({self.link})"
+
+    class Meta:
+        verbose_name = "Оплата"
+        verbose_name_plural = "Оплаты"
+        ordering = ["id"]

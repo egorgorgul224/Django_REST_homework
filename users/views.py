@@ -7,15 +7,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from materials.models import Course
-from users.models import Payment, Subscription, User
+from users.models import Donation, Payment, Subscription, User
 from users.permissions import IsModerator, IsOwnerAccount
-from users.serializers import (
-    PaymentSerializer,
-    RegisterUserSerializer,
-    SubscriptionSerializer,
-    UserMinInfoSerializer,
-    UserSerializer,
-)
+from users.serializers import (DonationSerializer, PaymentSerializer, RegisterUserSerializer, SubscriptionSerializer,
+                               UserMinInfoSerializer, UserSerializer)
+from users.services import create_stripe_price, create_stripe_product, create_stripe_session
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -119,3 +115,24 @@ class SubscriptionAPIView(APIView):
             Subscription.objects.create(user=user, course=course_item)
             message = "Подписка оформлена"
         return Response({"message": message})
+
+
+class DonationCreateAPIView(generics.CreateAPIView):
+    """Класс generics модели Donation для создания оплаты курса."""
+
+    serializer_class = DonationSerializer
+    queryset = Donation.objects.all()
+    permission_classes = [IsAuthenticated, ~IsModerator]
+
+    def perform_create(self, serializer):
+        """Метод для создания оплаты курса. Вызываются следующие функции: create_stripe_product(передается название
+        курса), create_stripe_price(передается stripe product и сумма оплаты), create_stripe_session(передается stripe
+        price). Результат возвращает id оплаты, сумму оплаты, id сессии, ссылку на оплату, id курса и пользователя."""
+
+        payment = serializer.save(user=self.request.user)
+        course = create_stripe_product(payment.course.name)
+        price = create_stripe_price(course, payment.amount)
+        session_id, payment_link = create_stripe_session(price)
+        payment.session_id = session_id
+        payment.link = payment_link
+        payment.save()

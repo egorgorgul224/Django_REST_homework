@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from users.models import Payment, Subscription, User
+from users.models import Donation, Payment, Subscription, User
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -45,3 +45,11 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         exclude = ["created_at"]
+
+
+class DonationSerializer(serializers.ModelSerializer):
+    """Сериализация модели Donation. Предоставлен доступ ко всем полям."""
+
+    class Meta:
+        model = Donation
+        fields = "__all__"
