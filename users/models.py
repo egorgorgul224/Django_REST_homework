@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from materials.models import Course, Lesson
+from materials.models import Course
 
 
 # Create your models here.
@@ -28,8 +28,8 @@ class User(AbstractUser):
 
 
 class Payment(models.Model):
-    """Модель платеж(оплата). Содержит поля user(модель User), created_at(автозаполнение), course(модель Course),
-    lesson(модель Lesson), amount, method(способ оплаты: наличные или перевод на счет)."""
+    """Модель платеж(оплата). Содержит поля user(модель User), course(модель Course), method(способ оплаты: наличные
+    или перевод на счет), session_id, link."""
 
     Cash = "cash"
     Transfer = "transfer"
@@ -40,19 +40,22 @@ class Payment(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="payments", verbose_name="Платеж")
-    created_at = models.DateTimeField(auto_now_add=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True, related_name="payments")
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, null=True, blank=True, related_name="payments")
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    method = models.CharField(choices=STATUS_CHOICES, default=Cash, verbose_name="Способ оплаты")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="payments")
+    method = models.CharField(choices=STATUS_CHOICES, default=Transfer, verbose_name="Способ оплаты")
+    session_id = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="ID сессии", help_text="Укажите ID сессии"
+    )
+    link = models.URLField(
+        max_length=400, blank=True, null=True, verbose_name="Ссылка на оплату", help_text="Укажите ссылку на оплату"
+    )
 
     def __str__(self):
-        return f"{self.created_at}, {self.course if self.course else self.lesson}, {self.user}, {self.amount}"
+        return f"{self.user}: {self.method} - {self.course} - {self.course.get("amount")}"
 
     class Meta:
         verbose_name = "Платеж"
         verbose_name_plural = "Платежи"
-        ordering = ["-created_at"]
+        ordering = ["-id"]
 
 
 class Subscription(models.Model):
@@ -68,35 +71,4 @@ class Subscription(models.Model):
     class Meta:
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
-        ordering = ["id"]
-
-
-class Donation(models.Model):
-    """Модель оплата курса. Содержит поля course(id курса), amount(сумма оплаты), session_id(id сессии),
-    link(ссылка на оплату), user(id_пользователя)."""
-
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="donations")
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    session_id = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="ID сессии", help_text="Укажите ID сессии"
-    )
-    link = models.URLField(
-        max_length=400, blank=True, null=True, verbose_name="Ссылка на оплату", help_text="Укажите ссылку на оплату"
-    )
-    user = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        related_name="donations",
-        blank=True,
-        null=True,
-        verbose_name="Пользователь",
-        help_text="Укажиет пользователя",
-    )
-
-    def __str__(self):
-        return f"{self.user}: {self.course} - {self.amount}({self.link})"
-
-    class Meta:
-        verbose_name = "Оплата"
-        verbose_name_plural = "Оплаты"
         ordering = ["id"]

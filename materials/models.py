@@ -5,7 +5,8 @@ from config import settings
 
 # Create your models here.
 class Course(models.Model):
-    """Модель учебного курса. Содержит поля name, preview(изображение/превью курса), description."""
+    """Модель учебного курса. Содержит поля name, preview(изображение/превью курса), description, amount(стоимость
+    курса)."""
 
     name = models.CharField(max_length=50, verbose_name="Название курса")
     preview = models.ImageField(upload_to="previews/", verbose_name="Превью курса", blank=True, null=True)
@@ -13,6 +14,7 @@ class Course(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="courses", blank=True, null=True
     )
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return self.name

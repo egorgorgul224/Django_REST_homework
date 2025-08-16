@@ -2,16 +2,17 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from materials.models import Course
-from users.models import Donation, Payment, Subscription, User
+from users.models import Payment, Subscription, User
 from users.permissions import IsModerator, IsOwnerAccount
-from users.serializers import (DonationSerializer, PaymentSerializer, RegisterUserSerializer, SubscriptionSerializer,
+from users.serializers import (PaymentSerializer, RegisterUserSerializer, SubscriptionSerializer,
                                UserMinInfoSerializer, UserSerializer)
-from users.services import create_stripe_price, create_stripe_product, create_stripe_session
+from users.services import (create_stripe_price, create_stripe_product, create_stripe_session, get_cash_info,
+                            get_checkout_session, transform_checkout_session_info)
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -117,11 +118,11 @@ class SubscriptionAPIView(APIView):
         return Response({"message": message})
 
 
-class DonationCreateAPIView(generics.CreateAPIView):
-    """Класс generics модели Donation для создания оплаты курса."""
+class PaymentCreateAPIView(generics.CreateAPIView):
+    """Класс generics модели Payment для создания оплаты курса."""
 
-    serializer_class = DonationSerializer
-    queryset = Donation.objects.all()
+    serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
     permission_classes = [IsAuthenticated, ~IsModerator]
 
     def perform_create(self, serializer):
@@ -130,9 +131,36 @@ class DonationCreateAPIView(generics.CreateAPIView):
         price). Результат возвращает id оплаты, сумму оплаты, id сессии, ссылку на оплату, id курса и пользователя."""
 
         payment = serializer.save(user=self.request.user)
-        course = create_stripe_product(payment.course.name)
-        price = create_stripe_price(course, payment.amount)
-        session_id, payment_link = create_stripe_session(price)
-        payment.session_id = session_id
-        payment.link = payment_link
-        payment.save()
+        if payment.method == "transfer":
+            course = create_stripe_product(payment.course.name)
+            price = create_stripe_price(course, payment.course.amount)
+            session_id, payment_link = create_stripe_session(price)
+            payment.session_id = session_id
+            payment.link = payment_link
+            payment.save()
+        elif payment.method == "cash":
+            payment.session_id = None
+            payment.link = None
+            payment.save()
+
+
+class PaymentRetrieveAPIView(generics.RetrieveAPIView):
+    """Класс generics модели Payment для вывода информации/статуса по оплате курса. Доступ к информации есть у админа
+    или модератора."""
+
+    serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
+    permission_classes = [IsAuthenticated, IsModerator | ~IsOwnerAccount | IsAdminUser]
+
+    def get(self, request, *args, **kwargs):
+        """Метод для получения информации о платеже."""
+
+        user = self.request.user
+        donation_object = get_object_or_404(Payment, pk=self.kwargs["pk"])
+        if donation_object.method == "transfer":
+            full_session_info = get_checkout_session(donation_object.session_id)
+            transform_session_info = transform_checkout_session_info(user, full_session_info)
+            return Response(transform_session_info)
+        elif donation_object.method == "cash":
+            transform_session_info = get_cash_info(user, donation_object)
+            return Response(transform_session_info)
