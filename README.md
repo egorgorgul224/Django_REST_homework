@@ -71,7 +71,8 @@ poetry install
 │     ├── commands - папка с командами
 │         ├── add_groups - команда для загрузки групп доступа в базу данных
 │ ├── migrations - папка с миграциями
-│ ├── admin.py, apps.py, models.py, serializers.py, tests.py, urls.py, views.py - модули для работы приложения
+│ ├── admin.py, apps.py, models.py, paginators.py, serializers.py, tests.py, urls.py, validators.py, views.py - модули
+для работы приложения
 ├── media
 │ ├── avatars - фото для профиля пользователя
 │ ├── lesson_video - видео для урока
@@ -89,10 +90,13 @@ poetry install
 │         ├── createadmin - команда для создания суперпользователя(админа)
 │ ├── migrations - папка с миграциями
 │ ├── templates - папка с шаблонами страниц
-│ ├── admin.py, apps.py, models.py, serializers.py, tests.py, urls.py, views.py - модули для работы приложения
+│ ├── admin.py, apps.py, models.py, oermissions.py, serializers.py, services.py, tests.py, urls.py, views.py - модули
+для работы приложения
 ├── .env.example - env экземпляр для доступа к закрытым данным
 ├── .flake8
 ├── .gitignore
+├── group_fixture.json - фикстура с группами прав
+├── payment_fixture.json - фикстура с оплатами курсов
 ├── manage.py
 ├── pyproject.toml
 ├── poetry.lock
