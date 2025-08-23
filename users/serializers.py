@@ -8,7 +8,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Payment
-        fields = "__all__"
+        exclude = ["user"]
 
 
 class UserSerializer(serializers.ModelSerializer):

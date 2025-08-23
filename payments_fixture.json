@@ -3,33 +3,22 @@
     "model": "users.payment",
     "pk": 1,
     "fields": {
-        "created_at": "2025-01-20T17:07:30.950Z",
-        "amount": "20000",
+        "user": 5,
+        "course": 3,
         "method": "transfer",
-        "lesson_id": 1,
-        "user_id": 5
+        "session_id": "cs_test_a1bb4kaRB8zswC9YwK6yiLHtCgUXmLxcJ8xrnVoaGPJw7yyAQfJ4duWIwe",
+        "link": "https://checkout.stripe.com/c/pay/cs_test_a1bb4kaRB8zswC9YwK6yiLHtCgUXmLxcJ8xrnVoaGPJw7yyAQfJ4duWIwe#fidkdWxOYHwnPyd1blpxYHZxWjA0V3JPYVBNczN3NzV3a25LfH0zQHdARD13MXRtTHRrb0BPVlVgfElSYVY0VmdjdzU1Ul90XFZMVkQxYGtXX1F3VDxncTBtNlJONUZxa29dMTZwQTFJSWZrNTVRcEJ8SkNIcScpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl"
     }
 },
-  {
+{
     "model": "users.payment",
     "pk": 2,
     "fields": {
-        "created_at": "2025-02-19T18:37:40.950Z",
-        "amount": "20000",
-        "method": "transfer",
-        "lesson_id": 3,
-        "user_id": 5
-    }
-},
-  {
-    "model": "users.payment",
-    "pk": 3,
-    "fields": {
-        "created_at": "2025-04-15T13:07:40.950Z",
-        "amount": "50000",
+        "user": 5,
+        "course": 4,
         "method": "cash",
-        "course_id": 3,
-        "user_id": 5
+        "session_id": null,
+        "link": null
     }
 }
 ]
