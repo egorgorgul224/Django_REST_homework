@@ -1,8 +1,10 @@
+from datetime import date, timedelta
+
 from celery import shared_task
 from django.core.mail import send_mail
 
 from config import settings
-from users.models import Subscription
+from users.models import Subscription, User
 
 
 @shared_task
@@ -26,3 +28,20 @@ def update_course_mailing(course_pk, course_name, lesson_name=None):
         fail_silently=True,
     )
     print(f"Успешно отправлено на почты {email_list}")
+
+
+@shared_task
+def check_users_activity():
+    """Функция раз в 14 дней проверяет всех пользователей по дате последнего входа на аккаунт. Если пользователь не
+    заходил более месяца, то блокирует его с помощью флага is_active(флаг принимает значение False)."""
+
+    blocked_users = []
+    users = User.objects.filter(is_active=True, is_staff=False, is_superuser=False, last_login__isnull=False)
+    time_delta = timedelta(31)
+    date_block = date.today() - time_delta
+    for user in users:
+        if user.last_login.date() <= date_block:
+            user.is_active = False
+            user.save()
+            blocked_users.append(user.email)
+    print(f"Заблокированные пользователи: {blocked_users}")
