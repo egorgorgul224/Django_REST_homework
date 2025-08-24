@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, viewsets
@@ -7,6 +8,8 @@ from rest_framework.permissions import IsAuthenticated
 from materials.models import Course, Lesson
 from materials.paginators import CourseLessonListPaginator
 from materials.serializers import CourseSerializer, LessonSerializer
+from materials.services import (get_course_info, get_course_last_update, is_last_update_later_4_hours,
+                                update_course_time_by_lesson)
 from materials.tasks import update_course_mailing
 from users.permissions import IsModerator, IsOwner
 
@@ -71,12 +74,17 @@ class CourseViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     def perform_update(self, serializer):
-        """Метод обновляет данные о курсе. При обновлении вызывается задача 'update_course_mailing' для уведомления
-        подписанных пользователей."""
+        """Метод обновляет данные о курсе. После обновления идет проверка, что предыдущее обновление было позже 4
+        часов. Если позже 4 часов, то вызывается задача 'update_course_mailing' для уведомления пользователей,
+        которые подписаны на обновления курса."""
 
+        last_update = get_course_last_update(self.kwargs["pk"])
         serializer.save()
-        course = get_object_or_404(Course, pk=self.kwargs["pk"])
-        update_course_mailing.delay(course.pk, course.name)
+        new_update = get_course_last_update(self.kwargs["pk"])
+        check_update_status = is_last_update_later_4_hours(last_update, new_update)
+        course_pk, course_name = get_course_info(self.kwargs["pk"])
+        if check_update_status:
+            update_course_mailing.delay(course_pk, course_name)
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
@@ -117,13 +125,17 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated, IsModerator | IsOwner]
 
     def perform_update(self, serializer):
-        """Метод обновляет данные об уроке. При обновлении вызывается задача 'update_course_mailing' для уведомления
-        подписанных пользователей об обновлении урока/курса."""
+        """Метод обновляет данные об уроке(также обновляет дату последнего обновления курса). После обновления идет
+        проверка, что предыдущее обновление курса было позже 4 часов. Если позже 4 часов, то вызывается задача
+        'update_course_mailing' для уведомления пользователей, которые подписаны на обновления курса/урока."""
 
         serializer.save()
         lesson = get_object_or_404(Lesson, pk=self.kwargs["pk"])
-        course = lesson.course
-        update_course_mailing.delay(course.pk, course.name, lesson.name)
+        last_update = lesson.course.updated_at
+        new_update = update_course_time_by_lesson(lesson.course.pk)
+        check_update_status = is_last_update_later_4_hours(last_update, new_update)
+        if check_update_status:
+            update_course_mailing.delay(lesson.course.pk, lesson.course.name, lesson.name)
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
