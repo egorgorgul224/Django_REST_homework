@@ -10,10 +10,11 @@
 2. [Установка и настройка проекта](#instruction)
 3. [Структура проекта](#structure)
 4. [Приложения](#apps)
-   - [Приложение materials](#materials_app) 
+   - [Приложение materials](#materials_app)
      - [Модели](#materials_models) 
      - [Контроллеры и ссылки](#materials_controllers)
      - [Сериализация](#materials_serialize)
+     - [Задачи](#materials_tasks)
      - [Пагинаторы](#materials_paginators)
      - [Валидаторы](#materials_validators)
      - [Кастомные команды](#materials_commands)
@@ -71,8 +72,8 @@ poetry install
 │     ├── commands - папка с командами
 │         ├── add_groups - команда для загрузки групп доступа в базу данных
 │ ├── migrations - папка с миграциями
-│ ├── admin.py, apps.py, models.py, paginators.py, serializers.py, tests.py, urls.py, validators.py, views.py - модули
-для работы приложения
+│ ├── admin.py, apps.py, models.py, paginators.py, serializers.py, tests.py, urls.py, validators.py, views.py,
+ tasks.py - модули для работы приложения
 ├── media
 │ ├── avatars - фото для профиля пользователя
 │ ├── lesson_video - видео для урока
@@ -176,6 +177,12 @@ amount(стоимость курса).
     ```
 
 2. LessonSerializer - сериализатор для модели Lesson. Meta класс передает все поля, кроме 'owner'.
+
+### Задачи<a id="materials_tasks"></a>
+
+В приложении реализованы следующие задачи:
+1. update_course_mailing - задача для отправки сообщения об обновлении курса для всех подписанных на данный курс
+пользователей. Вызывается при обновлении курса или урока.
 
 ### Пагинаторы<a id="materials_paginators"></a>
 
@@ -319,7 +326,7 @@ last_name, city, phone, avatar.
 пользователя. Для сериализатора добавлены новые поля:
    - payments - для вывода информации по всем платежам пользователя.\
 4. RegisterUserSerializer - сериализатор для контроллера UserCreateAPIView. Используется для регистрации/создания
-пользователя. Предоставлен доступ к полям: email, password, payments.
+пользователя. Предоставлен доступ к полям: email, password.
 5. SubscriptionSerializer - сериализатор модели Subscription. Предоставлен доступ ко всем полям, кроме 'created_at'.
 
 ### Классы разрешений<a id="users_permissions"></a>

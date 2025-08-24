@@ -31,12 +31,11 @@ class UserMinInfoSerializer(serializers.ModelSerializer):
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
-    """Сериализация модели User для регистрации/создания пользователя. Предоставлен доступ к полям: email, password,
-    payments."""
+    """Сериализация модели User для регистрации/создания пользователя. Предоставлен доступ к полям: email, password."""
 
     class Meta:
         model = User
-        fields = ["email", "password", "payments"]
+        fields = ["email", "password"]
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):

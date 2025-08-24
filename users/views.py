@@ -35,7 +35,7 @@ class UserListAPIView(generics.ListAPIView):
     queryset = User.objects.all()
 
     def get_serializer_class(self):
-        """Функция для вывода необходимого сериализатора. Если пользователь 'moderator' или 'staff' - выводится вся
+        """Метод для вывода необходимого сериализатора. Если пользователь 'moderator' или 'staff' - выводится вся
         информация через UserSerializer, иначе только часть информации через UserMinInfoSerializer."""
 
         user = self.request.user
@@ -51,7 +51,7 @@ class UserRetrieveAPIView(generics.RetrieveAPIView):
     queryset = User.objects.all()
 
     def get_serializer_class(self):
-        """Функция для вывода необходимого сериализатора. Если пользователь является владельцем или 'staff' - выводится
+        """Метод для вывода необходимого сериализатора. Если пользователь является владельцем или 'staff' - выводится
         вся информация через UserSerializer, иначе только часть информации через UserMinInfoSerializer."""
 
         user = self.request.user
@@ -100,7 +100,7 @@ class SubscriptionAPIView(APIView):
     permission_classes = [IsAuthenticated, ~IsModerator]
 
     def post(self, request, *args, **kwargs):
-        """Функция добавляет/удаляет пользователю подписку на курс. Если пользователь был подписан на курс - то
+        """Метод добавляет/удаляет пользователю подписку на курс. Если пользователь был подписан на курс - то
         подписка отменяется, в обратно случае подписка оформляется."""
 
         user = self.request.user

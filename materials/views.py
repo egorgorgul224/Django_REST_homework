@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, viewsets
@@ -6,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from materials.models import Course, Lesson
 from materials.paginators import CourseLessonListPaginator
 from materials.serializers import CourseSerializer, LessonSerializer
+from materials.tasks import update_course_mailing
 from users.permissions import IsModerator, IsOwner
 
 
@@ -47,14 +49,14 @@ class CourseViewSet(viewsets.ModelViewSet):
     pagination_class = CourseLessonListPaginator
 
     def perform_create(self, serializer):
-        """Функция добавляет в поле owner пользователя, который создает курс."""
+        """Метод добавляет в поле owner пользователя, который создает курс."""
 
         course = serializer.save()
         course.owner = self.request.user
         course.save()
 
     def get_permissions(self):
-        """Функция для проверки прав у пользователя. Если у пользователя есть группа прав 'Модератор', то пользователь
+        """Метод для проверки прав у пользователя. Если у пользователя есть группа прав 'Модератор', то пользователь
         может обновлять и просматривать курсы, но не может создавать или удалить их."""
 
         if self.action == "create":
@@ -68,6 +70,14 @@ class CourseViewSet(viewsets.ModelViewSet):
             self.permission_classes = (IsAuthenticated, ~IsModerator | IsOwner)
         return super().get_permissions()
 
+    def perform_update(self, serializer):
+        """Метод обновляет данные о курсе. При обновлении вызывается задача 'update_course_mailing' для уведомления
+        подписанных пользователей."""
+
+        serializer.save()
+        course = get_object_or_404(Course, pk=self.kwargs["pk"])
+        update_course_mailing.delay(course.pk, course.name)
+
 
 class LessonCreateAPIView(generics.CreateAPIView):
     """Класс generics модели Lesson для создания урока."""
@@ -76,7 +86,7 @@ class LessonCreateAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated, ~IsModerator]
 
     def perform_create(self, serializer):
-        """Функция добавляет в поле owner пользователя, который создает урок."""
+        """Метод добавляет в поле owner пользователя, который создает урок."""
 
         lesson = serializer.save()
         lesson.owner = self.request.user
@@ -105,6 +115,15 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsModerator | IsOwner]
+
+    def perform_update(self, serializer):
+        """Метод обновляет данные об уроке. При обновлении вызывается задача 'update_course_mailing' для уведомления
+        подписанных пользователей об обновлении урока/курса."""
+
+        serializer.save()
+        lesson = get_object_or_404(Lesson, pk=self.kwargs["pk"])
+        course = lesson.course
+        update_course_mailing.delay(course.pk, course.name, lesson.name)
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
