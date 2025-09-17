@@ -1,0 +1,61 @@
+services:
+  web:
+    build: .
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    env_file:
+      - .env
+    volumes:
+      - .:/code
+      - static_volume:/code/static
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:17
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    env_file:
+      - .env
+    image: redis:6
+    volumes:
+      - redis_data:/data
+
+  celery:
+    build: .
+    env_file:
+      - .env
+    command: bash -c "celery -A config  worker -l INFO -P eventlet"
+    depends_on:
+      - db
+      - redis
+      - web
+
+  celery_beat:
+    build: .
+    env_file:
+      - .env
+    command: bash -c "celery -A config beat -l INFO -S django"
+    depends_on:
+      - db
+      - redis
+      - web
+      - celery
+
+volumes:
+  postgres_data:
+  static_volume:
+  redis_data:
