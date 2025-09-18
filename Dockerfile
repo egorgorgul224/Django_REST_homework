@@ -15,5 +15,3 @@ COPY . .
 EXPOSE 8000
 
 RUN mkdir -p /app/media
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
