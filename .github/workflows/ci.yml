@@ -47,6 +47,11 @@ jobs:
     - name: Run tests
       run: python manage.py test
 
+    - name: Run tests
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      run: python manage.py test
+
   build:
     runs-on: ubuntu-latest
     needs: test
