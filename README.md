@@ -30,7 +30,8 @@
 6. [Тестирование](#tests)
 7. [Запуск и тестирование проекта локально, документация](#launch)
 8. [Запуск и тестирование с помощью Docker Compose](#docker)
-9. [Лицензия](#license)
+9. [Запуск и тестирование с помощью Yandex Cloud](#ya_cloud)
+10. [Лицензия](#license)
 
 ---
 
@@ -517,6 +518,18 @@ docker-compose stop
 
 или с удалением контейнера:
 docker-compose down
+```
+
+---
+
+## Запуск и тестирование с помощью Yandex Cloud<a id="ya_cloud"></a>
+
+С помощью Yandex Compute Cloud можно запустить проект на удаленном сервисе.
+
+Запуск:
+1. Клонируйте репозиторий:
+```
+git clone https://github.com/username/project-x.git
 ```
 
 ---
