@@ -79,5 +79,5 @@ jobs:
           docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/django_rest_homework:${{ github.sha }}
           docker stop django_rest_homework || true
           docker rm django_rest_homework || true
-          docker run -d --name myapp -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/django_rest_homework:${{ github.sha }}
+          docker run -d --name django_rest_homework -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/django_rest_homework:${{ github.sha }}
           EOF
