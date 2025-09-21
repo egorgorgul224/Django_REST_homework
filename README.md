@@ -531,7 +531,6 @@ docker-compose down
 ```
 git clone https://github.com/username/project-x.git
 ```
-2.
 
 ---
 
