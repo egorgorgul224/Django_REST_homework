@@ -14,7 +14,7 @@ class SubscriptionTestCase(APITestCase):
         """Метод для создания первичных данных: пользователь, курс, токен авторизации."""
 
         self.user = User.objects.create(email="admin@mail.ru")
-        self.course = Course.objects.create(name="Test Course", owner=self.user)
+        self.course = Course.objects.create(name="Test Course", amount=1000, owner=self.user)
         self.client.force_authenticate(user=self.user)
 
     def test_get_subscription(self):
@@ -40,4 +40,4 @@ class SubscriptionTestCase(APITestCase):
         data = {"users": self.user.pk, "course": self.course.pk}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertIn("У вас недостаточно прав для выполнения данного действия.", response.data["detail"])
+        self.assertIn("You do not have permission to perform this action.", response.data["detail"])
