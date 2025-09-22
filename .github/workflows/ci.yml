@@ -73,41 +73,11 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Install packages
+      - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          sudo apt-get update
-          sudo apt-get install -y python3-venv python3-pip
-          EOF
-
-      - name: Install dependencies
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          cd ${{ secrets.DEPLOY_DIR }}
-          python3 -m venv venv --clear
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          EOF
-
-      - name: Run migrations
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          cd ${{ secrets.DEPLOY_DIR }}
-          source venv/bin/activate
-          python manage.py migrate
-          EOF
-
-      - name: Collect files
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          cd ${{ secrets.DEPLOY_DIR }}
-          source venv/bin/activate
-          python manage.py collectstatic --noinput
-          EOF
-
-      - name: Restart app
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          sudo systemctl restart django_rest_homework.service
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/django_rest_homework:${{ github.sha }}
+          docker stop django_rest_homework || true
+          docker rm django_rest_homework || true
+          docker run -d --name django_rest_homework -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/django_rest_homework:${{ github.sha }}
           EOF
