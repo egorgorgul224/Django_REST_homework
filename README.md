@@ -522,18 +522,6 @@ docker-compose down
 
 ---
 
-## Запуск и тестирование с помощью Yandex Cloud<a id="ya_cloud"></a>
-
-С помощью Yandex Compute Cloud можно запустить проект на удаленном сервисе.
-
-Запуск:
-1. Клонируйте репозиторий:
-```
-git clone https://github.com/username/project-x.git
-```
-
----
-
 ## Лицензия<a id="license"></a>
 
 Этот проект лицензирован по [лицензии MIT](LICENSE).
