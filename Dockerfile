@@ -14,4 +14,6 @@ COPY . .
 
 EXPOSE 8000
 
-RUN mkdir -p /app/media
+RUN mkdir -p /app/staticfiles
+
+CMD ["bash", "-c", "python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000"]
