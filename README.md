@@ -522,6 +522,22 @@ docker-compose down
 
 ---
 
+## Запуск и тестирование с помощью Yandex Cloud<a id="ya_cloud"></a>
+
+С помощью Yandex Cloud можно запустить проект на сервере.
+
+Запуск:
+1. Проверить работоспособность:
+```
+http://89.169.182.198/
+```
+Скриншот успешного деплоя на сервер.
+![img.png](img.png)
+Ссылка успешного деплоя: https://github.com/egorgorgul224/Django_REST_homework/actions/runs/17955336057
+
+
+---
+
 ## Лицензия<a id="license"></a>
 
 Этот проект лицензирован по [лицензии MIT](LICENSE).
