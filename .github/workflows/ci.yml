@@ -79,10 +79,9 @@ jobs:
       - name: Deploy to server
         run: |
           scp -o StrictHostKeyChecking=no docker-compose.yml .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             docker system prune -af && \
             docker volume prune -f && \
             docker-compose -f docker-compose.yml down --remove-orphans
             docker-compose -f docker-compose.yml pull
             docker-compose -f docker-compose.yml up -d --build
-          "
