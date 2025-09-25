@@ -107,5 +107,5 @@ jobs:
       - name: Restart application
         run: |
           ssh -o StrictHostKeyChecking=no --env-file .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            sudo systemctl restart myapp.service
+            sudo systemctl restart django_rest_homework.service
           EOF
