@@ -533,8 +533,6 @@ http://89.169.182.198/
 ```
 Скриншот успешного деплоя на сервер.
 ![img.png](img.png)
-Ссылка успешного деплоя: https://github.com/egorgorgul224/Django_REST_homework/actions/runs/17955336057
-
 
 ---
 
