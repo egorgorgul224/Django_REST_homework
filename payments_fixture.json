@@ -1,0 +1,24 @@
+[
+{
+    "model": "users.payment",
+    "pk": 1,
+    "fields": {
+        "user": 5,
+        "course": 3,
+        "method": "transfer",
+        "session_id": "cs_test_a1bb4kaRB8zswC9YwK6yiLHtCgUXmLxcJ8xrnVoaGPJw7yyAQfJ4duWIwe",
+        "link": "https://checkout.stripe.com/c/pay/cs_test_a1bb4kaRB8zswC9YwK6yiLHtCgUXmLxcJ8xrnVoaGPJw7yyAQfJ4duWIwe#fidkdWxOYHwnPyd1blpxYHZxWjA0V3JPYVBNczN3NzV3a25LfH0zQHdARD13MXRtTHRrb0BPVlVgfElSYVY0VmdjdzU1Ul90XFZMVkQxYGtXX1F3VDxncTBtNlJONUZxa29dMTZwQTFJSWZrNTVRcEJ8SkNIcScpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl"
+    }
+},
+{
+    "model": "users.payment",
+    "pk": 2,
+    "fields": {
+        "user": 5,
+        "course": 4,
+        "method": "cash",
+        "session_id": null,
+        "link": null
+    }
+}
+]
