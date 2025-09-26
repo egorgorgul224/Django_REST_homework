@@ -76,17 +76,11 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Copy
-        run: |
-          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/docker-compose.yml
-
-      - name: Copy
-        run: |
-          scp -o StrictHostKeyChecking=no nginx/nginx.conf ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/nginx.conf
-
       - name: Deploy to server
         run: |
+          scp -o StrictHostKeyChecking=no docker-compose.prod.yml .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          cd ${{ secrets.DEPLOY_DIR }}
           docker system prune -af && \
           docker volume prune -f && \
           docker-compose -f docker-compose.yml down --remove-orphans
