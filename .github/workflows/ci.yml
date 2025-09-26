@@ -71,22 +71,16 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: write .env files
-        run: echo "${{ secrets.ENV }}" > .env
-
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Deploy to server
+      - name: Deploy to Server
         run: |
-          scp -o StrictHostKeyChecking=no docker-compose.prod.yml .env ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
-            cd ${{ secrets.DEPLOY_DIR }}
-            docker system prune -af && \
-            docker volume prune -f && \
-            docker-compose -f docker-compose.prod.yml down --remove-orphans && \
-            docker-compose -f docker-compose.prod.yml pull && \
-            docker-compose -f docker-compose.prod.yml up -d --build --force-recreate
-          "
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/django_rest_homework:${{ github.sha }}
+          docker stop django_rest_homework || true
+          docker rm django_rest_homework || true
+          docker run -d --name django_rest_homework -p 80:8000 --env-file .env ${{ secrets.DOCKER_HUB_USERNAME }}/django_rest_homework:${{ github.sha }}
+          EOF
